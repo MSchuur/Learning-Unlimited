@@ -27,20 +27,20 @@ router.get('/', async (req, res) => {
   //}
 //});
 
-router.post('/', async (req, res) => {
-    try {
-      const UserData = await User.create(req.body);
+//router.post('/', async (req, res) => {
+    //try {
+      //const UserData = await User.create(req.body);
   
-      req.session.save(() => {
-        req.session.User_id = UserData.id;
-        req.session.logged_in = true;
+      //req.session.save(() => {
+       // req.session.User_id = UserData.id;
+        //req.session.logged_in = true;
   
-        res.status(200).json(userData);
-      });
-    } catch (err) {
-      res.status(400).json(err);
-    }
-  });
+       // res.status(200).json(userData);
+      //});
+    //} catch (err) {
+     // res.status(400).json(err);
+   // }
+  //});
 
 
 //router.put('/:id', (req, res) => {
