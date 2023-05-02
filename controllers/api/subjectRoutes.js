@@ -51,50 +51,71 @@ router.get('/', async (req, res) => {
   //}
 //});
 
-router.put('/', async (req, res)=> {
-  try{
-    const subjectData =  await Subject.create(req.body);
-
-    req.session.save(() => {
-      req.sessionID.subject_id = subjectData.id;
-      req.session.logged_in = true;
-      res.status(200).json(subjectData);
-    });
+router.get('/:id', async (req, res) => {
+  try {
+    const subjectData = await subject.findByPk(req.params.id, {include: [Student, User, tutor] });
+    console.log(subjectrData)
+    const subject = subjectData.get({ plain: true });
+    res.status(200).json(tutor);
+    //res.render('subject', { subject });
   } catch (err) {
-    res.status(400).json(err);
+    res.status(500).json(err);
   }
-});     
+});
+
 
 router.post('/', async (req, res)=> {
   try{
-    const subjectData = await Subject.create(req.body);
+    const subjectData =  await Subject.create(req.body);
+
+    //req.session.save(() => {
+      //req.sessionID.subject_id = subjectData.id;
+      //req.session.logged_in = true;
+   // });
+    res.status(200).json(subjectData);
+  } catch (err) {
+    res.status(400).json(err)
+  };
+});     
+
+router.put('/id', async (req, res)=> {
+  try{
+    console.log(req.params.id, req.body)
+      const subjectData = await Subject.update(req.body, {where:{subject_id:req.params.id}});
 
 
-    req.session.save(() => {
-      req.session.User_id = SubjectData.id;
-      req.session.logged_in = true;
-      res.status(200).json(subjectData);
-    });
-  } catch (err) {res.status(400).json(err)};
+   // req.session.save(() => {
+      //req.session.User_id = SubjectData.id;
+      //req.session.logged_in = true;
+    //});
+    res.status(200).json(subjectData);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
 router.delete('/:id', withAuth, async (req, res) => {
   try {
-    const SubjectData = await SubjectData.destroy({
-      id: req.params.id,
-      user_id: req.session.user_id,
-    });
+    const subjectData = await Subject.destroy({where:{subject_id:req.params.id}})
+    // subject.destroy({
+    //   where: {
+    //     id: req.params.id,
+    //     subject_id: req.session.subject_id,
+    //   },
+    // });
 
-
-    if (SubjectData) {
-      res.status(404).json('no subject ID found.');
+    if (!subjectData) {
+      res.status(404).json({ message: 'No subject found with this id.' });
+      return;
     }
-    res.status(200).json(SubjectData);
+
+    res.status(200).json(subjectData);
   } catch (err) {
     res.status(500).json(err);
   }
-  
-
-
-
 });
+
+
+
+
+module.exports = router;
